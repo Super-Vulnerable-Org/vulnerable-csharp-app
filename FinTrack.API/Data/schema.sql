@@ -1,0 +1,121 @@
+-- FinTrack Database Schema
+-- Run this script to set up the initial database schema
+
+USE FinTrackDb;
+GO
+
+CREATE TABLE Users (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Email NVARCHAR(255) NOT NULL UNIQUE,
+    FullName NVARCHAR(255) NOT NULL,
+    PasswordHash NVARCHAR(500) NOT NULL,
+    Role NVARCHAR(50) NOT NULL DEFAULT 'user',
+    IsAdmin BIT NOT NULL DEFAULT 0,
+    IsActive BIT NOT NULL DEFAULT 1,
+    PhoneNumber NVARCHAR(20) NULL,
+    ProfilePictureUrl NVARCHAR(500) NULL,
+    Currency NVARCHAR(10) NOT NULL DEFAULT 'USD',
+    TimeZone NVARCHAR(100) NOT NULL DEFAULT 'UTC',
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    LastLoginAt DATETIME2 NULL
+);
+GO
+
+CREATE TABLE Accounts (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL REFERENCES Users(Id) ON DELETE CASCADE,
+    Name NVARCHAR(255) NOT NULL,
+    Type NVARCHAR(50) NOT NULL,
+    Balance DECIMAL(18,2) NOT NULL DEFAULT 0,
+    CreditLimit DECIMAL(18,2) NOT NULL DEFAULT 0,
+    Currency NVARCHAR(10) NOT NULL DEFAULT 'USD',
+    Institution NVARCHAR(255) NULL,
+    AccountNumber NVARCHAR(100) NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    Color NVARCHAR(20) NULL,
+    Icon NVARCHAR(100) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE()
+);
+GO
+
+CREATE INDEX IX_Accounts_UserId ON Accounts(UserId);
+GO
+
+CREATE TABLE Transactions (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL REFERENCES Users(Id),
+    AccountId INT NOT NULL REFERENCES Accounts(Id),
+    Description NVARCHAR(500) NOT NULL,
+    Amount DECIMAL(18,2) NOT NULL,
+    Type NVARCHAR(50) NOT NULL,
+    Category NVARCHAR(100) NOT NULL,
+    SubCategory NVARCHAR(100) NULL,
+    TransactionDate DATETIME2 NOT NULL,
+    Notes NVARCHAR(1000) NULL,
+    Tags NVARCHAR(500) NULL,
+    IsRecurring BIT NOT NULL DEFAULT 0,
+    RecurrencePattern NVARCHAR(100) NULL,
+    MerchantName NVARCHAR(255) NULL,
+    ReferenceNumber NVARCHAR(100) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE()
+);
+GO
+
+CREATE INDEX IX_Transactions_UserId ON Transactions(UserId);
+CREATE INDEX IX_Transactions_AccountId ON Transactions(AccountId);
+CREATE INDEX IX_Transactions_TransactionDate ON Transactions(TransactionDate);
+CREATE INDEX IX_Transactions_Category ON Transactions(Category);
+GO
+
+CREATE TABLE Budgets (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL REFERENCES Users(Id) ON DELETE CASCADE,
+    Name NVARCHAR(255) NOT NULL,
+    Category NVARCHAR(100) NOT NULL,
+    Amount DECIMAL(18,2) NOT NULL,
+    SpentAmount DECIMAL(18,2) NOT NULL DEFAULT 0,
+    Period NVARCHAR(50) NOT NULL,
+    StartDate DATETIME2 NOT NULL,
+    EndDate DATETIME2 NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    AlertEnabled BIT NOT NULL DEFAULT 1,
+    AlertThresholdPercent INT NOT NULL DEFAULT 80,
+    Color NVARCHAR(20) NULL,
+    Notes NVARCHAR(1000) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE()
+);
+GO
+
+CREATE INDEX IX_Budgets_UserId ON Budgets(UserId);
+GO
+
+CREATE TABLE Webhooks (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL REFERENCES Users(Id) ON DELETE CASCADE,
+    Name NVARCHAR(255) NOT NULL,
+    Url NVARCHAR(2000) NOT NULL,
+    EventType NVARCHAR(100) NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    Secret NVARCHAR(500) NULL,
+    RetryCount INT NOT NULL DEFAULT 3,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    LastTriggeredAt DATETIME2 NULL,
+    LastDeliverySucceeded BIT NULL
+);
+GO
+
+CREATE TABLE Transfers (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL REFERENCES Users(Id),
+    SourceAccountId INT NOT NULL REFERENCES Accounts(Id),
+    DestinationAccountId INT NOT NULL REFERENCES Accounts(Id),
+    Amount DECIMAL(18,2) NOT NULL,
+    Description NVARCHAR(500) NULL,
+    TransferDate DATETIME2 NOT NULL,
+    Notes NVARCHAR(1000) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE()
+);
+GO

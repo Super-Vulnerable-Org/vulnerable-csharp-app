@@ -1,0 +1,68 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+_ReSharper*/
+*.resharper
+*.DotSettings.user
+
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+## Visual Studio
+.vs/
+*.cache
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+## OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## User-specific
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Rider
+.idea/
+
+## Test results
+TestResults/
+*.trx
+*.coveragexml
+
+## Docker
+docker-compose.override.yml
+
+## Secrets (keep appsettings.json but ignore secrets overrides in production)
+appsettings.Production.json
+secrets.json
