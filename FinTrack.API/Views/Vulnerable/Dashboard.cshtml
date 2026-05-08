@@ -1,0 +1,28 @@
+@model FinTrack.API.Models.DashboardViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+
+    @* razor-use-of-htmlstring: new HtmlString with unencoded user content *@
+    <div class="user-content">
+        @(new Microsoft.AspNetCore.Html.HtmlString(Model.UserBio))
+    </div>
+
+    @* razor-use-of-htmlstring variant *@
+    <div class="announcement">
+        @(new HtmlString(Model.Announcement))
+    </div>
+
+    @* html-raw-json: @Html.Raw with Json.Encode *@
+    <script type="text/javascript">
+        var userData = @Html.Raw(Json.Encode(Model.UserData));
+        var settings = @Html.Raw(JsonConvert.SerializeObject(Model.Settings));
+        var extra = @Html.Raw(Model.ExtraJson.ToJson());
+    </script>
+</body>
+</html>

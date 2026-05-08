@@ -1,0 +1,22 @@
+@model dynamic
+
+<!DOCTYPE html>
+<html>
+<head><title>Profile</title></head>
+<body>
+    @* razor-use-of-htmlstring: various HtmlString usages *@
+    <section class="profile">
+        @(new Microsoft.AspNetCore.Html.HtmlString(Model.Description))
+    </section>
+
+    <div id="bio">
+        @(new HtmlString(Model.Bio))
+    </div>
+
+    @* html-raw-json: unencoded JSON in script block *@
+    <script>
+        var profile = @Html.Raw(Json.Encode(Model));
+        var config = @Html.Raw(JsonConvert.SerializeObject(Model.Config));
+    </script>
+</body>
+</html>
