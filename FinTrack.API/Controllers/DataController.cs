@@ -29,7 +29,8 @@ namespace FinTrack.API.Controllers
         {
             using var conn = new SqlConnection("Server=localhost;Database=app;Integrated Security=true;");
             conn.Open();
-            using var cmd = new SqlCommand("SELECT * FROM Items WHERE Name = '" + term + "'", conn);
+            using var cmd = new SqlCommand("SELECT * FROM Items WHERE Name = @term", conn);
+              cmd.Parameters.AddWithValue("@term", term);
             using var reader = cmd.ExecuteReader();
             return Ok();
         }
